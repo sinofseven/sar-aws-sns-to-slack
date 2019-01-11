@@ -1,0 +1,141 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: E2E Test for aws-sns-to-slack
+
+Parameters:
+  StageName:
+    Type: String
+    Default: test
+
+Resources:
+  Queue:
+    Type: AWS::SQS::Queue
+
+  SnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: !GetAtt Queue.Arn
+          Protocol: sqs
+
+  QueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": "SQS:SendMessage",
+              "Resource": "*",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": "${SnsTopic}"
+                }
+              }
+            }
+          ]
+        }
+      Queues:
+        - !Ref Queue
+
+  APIGatewayToSNSTopicRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+        - arn:aws:iam::aws:policy/AmazonSNSFullAccess
+
+  API:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: TestRequestIncommingWebhookAPI
+      Body:
+        openapi: "3.0.1"
+        info:
+          title: "TestRequestIncommingWebhookAPI"
+          version: "2019-01-11T10:04:58Z"
+        paths:
+          /default:
+            post:
+              responses:
+                "200":
+                  description: "200 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Empty"
+              x-amazon-apigateway-integration:
+                credentials: "arn:aws:iam::355081757265:role/TestAPIGatewayToSNSRole"
+                uri: "arn:aws:apigateway:ap-northeast-1:sns:action/Publish"
+                responses:
+                  default:
+                    statusCode: "200"
+                requestParameters:
+                  integration.request.querystring.TopicArn: !Sub "'${SnsTopic}'"
+                  integration.request.querystring.Subject: "'default'"
+                  integration.request.querystring.Message: "method.request.body"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws"
+          /specific:
+            post:
+              responses:
+                "200":
+                  description: "200 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Empty"
+              x-amazon-apigateway-integration:
+                credentials: "arn:aws:iam::355081757265:role/TestAPIGatewayToSNSRole"
+                uri: "arn:aws:apigateway:ap-northeast-1:sns:action/Publish"
+                responses:
+                  default:
+                    statusCode: "200"
+                requestParameters:
+                  integration.request.querystring.TopicArn: !Sub "'${SnsTopic}'"
+                  integration.request.querystring.Subject: "'specific'"
+                  integration.request.querystring.Message: "method.request.body"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws"
+        components:
+          schemas:
+            Empty:
+              title: "Empty Schema"
+              type: "object"
+
+  Deployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref API
+      StageName: !Ref StageName
+
+  AWSSnsToSlack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        DefaultSlackIncommingWebhookUrl: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/default
+      TemplateURL: sam.yml
+
+
+Outputs:
+  APIUrl:
+    Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}
+  DefaultUrl:
+    Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/default
+  SpecificUrl:
+    Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/specific
