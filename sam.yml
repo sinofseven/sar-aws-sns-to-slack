@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Publish SNS Topic, and notificate Slack
+
+Parameters:
+  DefaultSlackIncommingWebhookUrl:
+    Descrption: デフォルトで使用するSlackのIncommingWebhookのURL
+    Type: String
+
+Resources:
+  SlackNotifierTopic:
+    Type: AWS::SNS::Topic
+
+  SlackNotifierRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  SlackNotifierFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Post to Slack incomming webhook url
+      Runtime: python3.7
+      Timeout: 300
+      MemorySize: 256
+      CodeUri: src/handler
+      Handler: slack_notify.lambda_handler
+      Role: !GetAtt SlackNotifierRole.Arn
+      AutoPublishAlias: production
+      Environment:
+        Variables:
+          DEFAULT_INCOMMING_WEBHOOK_URL: !Ref DefaultSlackIncommingWebhookUrl
+      Events:
+        SNSTopic:
+          Type: SNS
+          Properties:
+            Topic: !Ref SlackNotifierTopic
+
+Outputs:
+  SlackNotifierTopicArn:
+    Value: !Ref SlackNotifierTopic
+    Export:
+      Name: !Sub ${AWS::StackName}-SlackNotifierTopicArn
