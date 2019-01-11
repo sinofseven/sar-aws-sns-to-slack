@@ -4,11 +4,13 @@ E2E_TEST_STACK:=E2ETestStackForAWSSnsToSlack
 
 lint:
 	pipenv run flake8 \
-		./src/handler
+		src/handler \
+		tests/e2e/handler
 
 isort:
 	pipenv run isort -rc \
-		src/handler
+		src/handler \
+		tests/e2e/handler
 
 build:
 	rm -rf .sam
@@ -36,7 +38,7 @@ test-e2e:
 		--template-file .sam/template.yml \
 		--stack-name $(E2E_TEST_STACK) \
 		--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
-	echo "pipenv run pytest tests/e2e/handler/"
+	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/handler/
 	pipenv run aws cloudformation delete-stack \
 		--stack-name $(E2E_TEST_STACK)
 	pipenv run aws cloudformation wait stack-delete-complete \

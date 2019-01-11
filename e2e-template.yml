@@ -10,6 +10,9 @@ Parameters:
 Resources:
   Queue:
     Type: AWS::SQS::Queue
+    Properties:
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: 0
 
   SnsTopic:
     Type: AWS::SNS::Topic
@@ -133,9 +136,11 @@ Resources:
 
 
 Outputs:
-  APIUrl:
-    Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}
   DefaultUrl:
     Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/default
   SpecificUrl:
     Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/specific
+  SNSTopicArn:
+    Value: !GetAtt AWSSnsToSlack.Outputs.SlackNotifierTopicArn
+  SQSUrl:
+    Value: !Ref Queue
