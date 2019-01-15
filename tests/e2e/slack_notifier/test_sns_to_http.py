@@ -15,6 +15,37 @@ def cfn():
     return boto3.client('cloudformation')
 
 
+@pytest.fixture(scope='module', autouse=True)
+def prepare_stack(stack_name, cfn):
+    template = None
+    with open('.sam/template.yml') as f:
+        template = f.read()
+
+    deploy = cfn.update_stack
+    waiter = cfn.get_waiter('stack_update_complete')
+    try:
+        cfn.describe_stacks(StackName=stack_name)
+    except:
+        deploy = cfn.create_stack
+        waiter = cfn.get_waiter('stack_create_complete')
+
+    options = {
+        'StackName': stack_name,
+        'TemplateBody': template,
+        'Capabilities': [
+            'CAPABILITY_IAM',
+            'CAPABILITY_AUTO_EXPAND'
+        ]
+    }
+    deploy(**options)
+    waiter.wait(StackName=stack_name)
+
+    yield
+
+    cfn.delete_stack(StackName=stack_name)
+    cfn.get_waiter('stack_delete_complete').wait(StackName=stack_name)
+
+
 @pytest.fixture(scope='module')
 def sqs():
     return boto3.client('sqs')
