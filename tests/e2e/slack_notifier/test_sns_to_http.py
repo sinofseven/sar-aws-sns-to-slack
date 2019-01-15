@@ -94,6 +94,10 @@ list_expected = [
 ]
 
 
+def test_error():
+    assert False
+
+
 class TestDefaultUrl(object):
     @pytest.mark.parametrize('expected', list_expected)
     def test_expected(self, sns, sns_topic_arn, sqs, sqs_url, expected):
