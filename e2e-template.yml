@@ -81,7 +81,7 @@ Resources:
                       schema:
                         $ref: "#/components/schemas/Empty"
               x-amazon-apigateway-integration:
-                credentials: "arn:aws:iam::355081757265:role/TestAPIGatewayToSNSRole"
+                credentials: !Sub "${APIGatewayToSNSTopicRole.Arn}"
                 uri: "arn:aws:apigateway:ap-northeast-1:sns:action/Publish"
                 responses:
                   default:
@@ -103,7 +103,7 @@ Resources:
                       schema:
                         $ref: "#/components/schemas/Empty"
               x-amazon-apigateway-integration:
-                credentials: "arn:aws:iam::355081757265:role/TestAPIGatewayToSNSRole"
+                credentials: !Sub "${APIGatewayToSNSTopicRole.Arn}"
                 uri: "arn:aws:apigateway:ap-northeast-1:sns:action/Publish"
                 responses:
                   default:
