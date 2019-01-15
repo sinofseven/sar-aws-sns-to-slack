@@ -3,6 +3,7 @@ import os
 
 import boto3
 import pytest
+from botocore.exceptions import ClientError
 
 
 @pytest.fixture(scope='module')
@@ -23,11 +24,15 @@ def prepare_stack(stack_name, cfn):
 
     deploy = cfn.update_stack
     waiter = cfn.get_waiter('stack_update_complete')
+
     try:
         cfn.describe_stacks(StackName=stack_name)
-    except:
-        deploy = cfn.create_stack
-        waiter = cfn.get_waiter('stack_create_complete')
+    except ClientError as e:
+        if e.response['Error']['Message'] == f'Stack with id {stack_name} does not exist':
+            deploy = cfn.create_stack
+            waiter = cfn.get_waiter('stack_create_complete')
+        else:
+            raise
 
     options = {
         'StackName': stack_name,
