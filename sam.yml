@@ -31,7 +31,7 @@ Resources:
       Runtime: python3.7
       Timeout: 300
       MemorySize: 256
-      CodeUri: src/handler/slack_notifier
+      CodeUri: src/handlers/slack_notifier
       Handler: slack_notify.lambda_handler
       Role: !GetAtt SlackNotifierRole.Arn
       AutoPublishAlias: production

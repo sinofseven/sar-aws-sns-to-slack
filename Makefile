@@ -4,13 +4,13 @@ E2E_TEST_STACK:=E2ETestStackForAWSSnsToSlack
 
 lint:
 	pipenv run flake8 \
-		src/handler \
-		tests/e2e/handler
+		src/handlers/slack_notifier \
+		tests/e2e/slack_notifier
 
 isort:
 	pipenv run isort -rc \
-		src/handler \
-		tests/e2e/handler
+		src/handlers/slack_notifier \
+		tests/e2e/slack_notifier
 
 build:
 	rm -rf .sam
