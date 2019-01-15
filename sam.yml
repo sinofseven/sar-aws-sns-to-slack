@@ -4,7 +4,7 @@ Description: Publish SNS Topic, and notificate Slack
 
 Parameters:
   DefaultSlackIncommingWebhookUrl:
-    Descrption: デフォルトで使用するSlackのIncommingWebhookのURL
+    Description: デフォルトで使用するSlackのIncommingWebhookのURL
     Type: String
 
 Resources:
