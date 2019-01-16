@@ -38,7 +38,7 @@ test-e2e:
 #		--template-file .sam/template.yml \
 #		--stack-name $(E2E_TEST_STACK) \
 #		--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND;
-	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/slack_notifier/ ;
+	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/test_e2e.py ;
 #	pipenv run aws cloudformation delete-stack \
 #		--stack-name $(E2E_TEST_STACK)
 #	pipenv run aws cloudformation wait stack-delete-complete \
