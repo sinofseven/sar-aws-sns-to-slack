@@ -3,6 +3,7 @@ import os
 
 import boto3
 import pytest
+from botocore.exceptions import ClientError
 
 
 @pytest.fixture(scope='module')
@@ -13,6 +14,41 @@ def stack_name():
 @pytest.fixture(scope='module')
 def cfn():
     return boto3.client('cloudformation')
+
+
+@pytest.fixture(scope='module', autouse=True)
+def prepare_stack(stack_name, cfn):
+    template = None
+    with open('.sam/template.yml') as f:
+        template = f.read()
+
+    deploy = cfn.update_stack
+    waiter = cfn.get_waiter('stack_update_complete')
+
+    try:
+        cfn.describe_stacks(StackName=stack_name)
+    except ClientError as e:
+        if e.response['Error']['Message'] == f'Stack with id {stack_name} does not exist':
+            deploy = cfn.create_stack
+            waiter = cfn.get_waiter('stack_create_complete')
+        else:
+            raise
+
+    options = {
+        'StackName': stack_name,
+        'TemplateBody': template,
+        'Capabilities': [
+            'CAPABILITY_IAM',
+            'CAPABILITY_AUTO_EXPAND'
+        ]
+    }
+    deploy(**options)
+    waiter.wait(StackName=stack_name)
+
+    yield
+
+    cfn.delete_stack(StackName=stack_name)
+    cfn.get_waiter('stack_delete_complete').wait(StackName=stack_name)
 
 
 @pytest.fixture(scope='module')

@@ -4,13 +4,13 @@ E2E_TEST_STACK:=E2ETestStackForAWSSnsToSlack
 
 lint:
 	pipenv run flake8 \
-		src/handler \
-		tests/e2e/handler
+		src/handlers/slack_notifier \
+		tests/e2e/
 
 isort:
 	pipenv run isort -rc \
-		src/handler \
-		tests/e2e/handler
+		src/handlers/slack_notifier \
+		tests/e2e/
 
 build:
 	rm -rf .sam
@@ -34,15 +34,7 @@ test-e2e:
 		--template-file e2e-template.yml \
 		--s3-bucket $$S3_BUCKET \
 		--output-template-file .sam/template.yml
-	pipenv run aws cloudformation deploy \
-		--template-file .sam/template.yml \
-		--stack-name $(E2E_TEST_STACK) \
-		--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
-	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/handler/
-	pipenv run aws cloudformation delete-stack \
-		--stack-name $(E2E_TEST_STACK)
-	pipenv run aws cloudformation wait stack-delete-complete \
-		--stack-name $(E2E_TEST_STACK)
+	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/test_e2e.py ;
 
 .PHONY: \
 	lint \
