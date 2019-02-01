@@ -6,7 +6,7 @@ import boto3
 ssm = boto3.client('ssm')
 sns = boto3.client('sns')
 logger = getLogger(__name__)
-SSM_PARAMETER_NAME='/sns-to-slack/SnsTopicArn'
+SSM_PARAMETER_NAME = '/sns-to-slack/SnsTopicArn'
 
 
 def get_sns_topic_arn(ssm_parameter_name=SSM_PARAMETER_NAME, ssm_client=ssm):
