@@ -24,8 +24,15 @@ jobs:
       - checkout
       - <<: *install_dependencies
       - run:
+          name: make create-e2e-stack
+          command: make create-e2e-stack
+      - run:
           name: make test-e2e
           command: make test-e2e
+      - run:
+          name: make delete-e2e-stack
+          command: make delete-e2e-stack
+          when: always
 
 workflows:
   version: 2

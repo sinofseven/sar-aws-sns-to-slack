@@ -6,6 +6,12 @@ Parameters:
   DefaultSlackIncommingWebhookUrl:
     Description: デフォルトで使用するSlackのIncommingWebhookのURL
     Type: String
+  SlackNotifierTopicArnParameterName:
+    Description: |
+      Slack通知に使用するSNS TopicのArnを格納するSSM Parameter。
+      この値を変更していない場合は、Layerから使用する際にSNS TopicのArnを指定する必要がない
+    Type: String
+    Default: "/sns-to-slack/SnsTopicArn"
 
 Resources:
   SlackNotifierTopic:
@@ -44,8 +50,35 @@ Resources:
           Properties:
             Topic: !Ref SlackNotifierTopic
 
+  SlackNotifierTopicArnParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Slack通知用のSNS TopicのArnを格納するSSM Parameter
+      Name: !Ref SlackNotifierTopicArnParameterName
+      Type: String
+      Value: !Ref SlackNotifierTopic
+
+  SlackNotifierLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: src/layers
+      CompatibleRuntimes:
+        - python3.6
+        - python3.7
+        - python2.7
+      LicenseInfo: MIT License
+      RetentionPolicy: Delete
+
 Outputs:
   SlackNotifierTopicArn:
     Value: !Ref SlackNotifierTopic
     Export:
       Name: !Sub ${AWS::StackName}-SlackNotifierTopicArn
+  SlackNotifierTopicArnParameterName:
+    Value: !Ref SlackNotifierTopicArnParameter
+    Export:
+      Name: !Sub ${AWS::StackName}-SlackNotifierTopicArnParameterName
+  SlackNotifierLayerArn:
+    Value: !Ref SlackNotifierLayer
+    Export:
+      Name: !Sub ${AWS::StackName}-SlackNotifierLayerArn

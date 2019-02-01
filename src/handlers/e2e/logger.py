@@ -39,6 +39,10 @@ def get_logging_config():
             'botocore': {
                 'handlers': ['consoleHandler'],
                 'level': 'INFO'
+            },
+            'aws_sns_to_slack.py': {
+                'handlers': ['consoleHandler'],
+                'level': 'DEBUG'
             }
         },
         'handlers': {
