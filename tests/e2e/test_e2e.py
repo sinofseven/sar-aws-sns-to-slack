@@ -56,6 +56,32 @@ list_expected = [
 
 test_data = {
     'layer': {
+        'slack_notify': [
+            (
+                {
+                    'text': 'sinofseven'
+                }
+            ),
+            (
+                {
+                    'text': 'あなたは夜明けに微笑んで',
+                    'channel': '#first'
+                }
+            ),
+            (
+                {
+                    'text': '奏でる少女の道行きは',
+                    'username': 'second'
+                }
+            ),
+            (
+                {
+                    'text': 'アマデウスの詩、謳え敗者の王',
+                    'channel': '#third',
+                    'username': 'third'
+                }
+            )
+        ],
         'easy_slack_notify': [
             (
                 {
@@ -125,6 +151,21 @@ class TestSpecificUrl(object):
 
 
 class TestLayerPython36(object):
+    @pytest.mark.parametrize(
+        'expected', test_data['layer']['slack_notify']
+    )
+    def test_slack_notify_default(self, expected, lambda_client, name_lambda_python36, sqs, sqs_url):
+        event = {
+            'case': 'test_slack_notify_default',
+            'data': expected
+        }
+        lambda_invoke(lambda_client, name_lambda_python36, event)
+
+        body = get_sqs_message(sqs, sqs_url)
+
+        assert body['Subject'] == 'default'
+        assert json.loads(body['Message']) == expected
+
     @pytest.mark.parametrize(
         'data, expected', test_data['layer']['easy_slack_notify']
     )
@@ -196,6 +237,21 @@ class TestLayerPython36(object):
 
 class TestLayerPython37(object):
     @pytest.mark.parametrize(
+        'expected', test_data['layer']['slack_notify']
+    )
+    def test_slack_notify_default(self, expected, lambda_client, name_lambda_python37, sqs, sqs_url):
+        event = {
+            'case': 'test_slack_notify_default',
+            'data': expected
+        }
+        lambda_invoke(lambda_client, name_lambda_python37, event)
+
+        body = get_sqs_message(sqs, sqs_url)
+
+        assert body['Subject'] == 'default'
+        assert json.loads(body['Message']) == expected
+
+    @pytest.mark.parametrize(
         'data, expected', test_data['layer']['easy_slack_notify']
     )
     def test_easy_slack_notify_default(self, data, expected, lambda_client, name_lambda_python37, sqs, sqs_url):
@@ -265,6 +321,21 @@ class TestLayerPython37(object):
 
 
 class TestLayerPython27(object):
+    @pytest.mark.parametrize(
+        'expected', test_data['layer']['slack_notify']
+    )
+    def test_slack_notify_default(self, expected, lambda_client, name_lambda_python27, sqs, sqs_url):
+        event = {
+            'case': 'test_slack_notify_default',
+            'data': expected
+        }
+        lambda_invoke(lambda_client, name_lambda_python27, event)
+
+        body = get_sqs_message(sqs, sqs_url)
+
+        assert body['Subject'] == 'default'
+        assert json.loads(body['Message']) == expected
+
     @pytest.mark.parametrize(
         'data, expected', test_data['layer']['easy_slack_notify']
     )

@@ -1,8 +1,11 @@
 from aws_sns_to_slack import slack_notify, easy_slack_notify
 from logger import get_logger
+import json
 
 logger = get_logger(__name__)
 
+def test_slack_notify_default(test_data):
+    slack_notify(json.dumps(test_data))
 
 
 def test_easy_slack_notify_default(test_data):
@@ -41,7 +44,9 @@ def lambda_handler(event, content):
     case = event['case']
     data = event['data']
 
-    if case == 'test_easy_slack_notify_default':
+    if case == 'test_slack_notify_default':
+        test_slack_notify_default(data)
+    elif case == 'test_easy_slack_notify_default':
         test_easy_slack_notify_default(data)
     elif case == 'test_easy_slack_notify_specific_url':
         test_easy_slack_notify_specific_url(event)
