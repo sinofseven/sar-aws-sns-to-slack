@@ -19,6 +19,8 @@ SNSトピックはExportValueしているので、使う際にはそちらをImp
   - ```DefaultSlackIncommingWebhookUrl```: [必須] デフォルトで使用するSlackのIncommingWebhookのURL
 - Export-Value
   - ```${AWS::StackName}-SlackNotifierTopicArn```: SNSトピックのARN
+  - ```${AWS::StackName}-SlackNotifierTopicArnParameterName```: SNSトピックのARNを格納したSSM Parameterの名前
+  - ```${AWS::StackName}-SlackNotifierLayerArn```: 簡単にSNSにPublishでるように作成したLambda LayerのARN
 
 ## Lambda Layer
 
@@ -105,3 +107,11 @@ aws_sns_to_slack.slack_notify(
   - **ssm_client** (*boto3.client('ssm')*) --  
     SSM ParameterからSNS TopicのARNを取得する際に使用するクライアント。  
     指定しなければ、```boto3.client('ssm')```が使用される。
+
+## ローカルからデプロイする方法
+```bash
+$ S3_BUCKET=$(SAMのパッケージをアップロードするS3 Bucket) \
+$ STACK_NAME=$(CloudFormationのスタック名) \
+$ SLACK_INCOMMING_WEBHOOK_URL=$(デフォルトで使用するSlackのIncommingWebhookのURL) \
+$ make deploy
+```
