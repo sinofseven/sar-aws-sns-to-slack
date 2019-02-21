@@ -19,3 +19,89 @@ SNSトピックはExportValueしているので、使う際にはそちらをImp
   - ```DefaultSlackIncommingWebhookUrl```: [必須] デフォルトで使用するSlackのIncommingWebhookのURL
 - Export-Value
   - ```${AWS::StackName}-SlackNotifierTopicArn```: SNSトピックのARN
+
+## Lambda Layer
+
+簡単にSNSにPublishできるようにLambda Layerも作ってみました。
+
+### Python
+Pythonの3.7, 3.6, 2.7に対応しています。  
+以下のように書けば、使用可能になります。
+
+```python
+import aws_sns_to_slack
+```
+
+- easy_slack_notify()
+- slack_notify()
+
+#### ```easy_slack_notify(message, **args)```
+
+```python
+aws_sns_to_slack.easy_slack_notify(
+    message,
+    channel='string',
+    username='string',
+    incomming_webhook='string',
+    ssm_parameter_name='string',
+    topic_arn='string',
+    sns_client=boto3.client('sns'),
+    ssm_client=boto3.client('ssm')
+)
+```
+
+- Parameters
+  - **message** (*string*) --  
+    **[REQUIRED]**  
+    Slackに送るメッセージ。
+  - **channel** (*string*) --  
+    メッセージを送るチャンネルを指定する。  
+    指定しなければ、incomming_webhookのDefault Channelになる。
+  - **incomming_webhook** (*string*) --  
+    Slackのincomming_webhookのURLを指定する。  
+    指定しなければ、作成時に指定したDefaultのURLを使用する。
+  - **ssm_parameter_name** (*string*) --  
+    PublishするSNS TopicのARNを格納したSSM Parameterの名前を指定する。  
+    指定しなければ、Default値```/sns-to-slack/SnsTopicArn```が指定される。
+  - **topic_arn** (*string*) --  
+    メッセージデータをPublishするSNS TopicのARN。  
+    指定しなければSSM ParameterからARNを取得する。
+  - **sns_client** (*boto3.client('sns')*) --  
+    SNS TopicにPublishする際に使用するクライアント。  
+    指定しなければ、```boto3.client('sns')```が使用される。
+  - **ssm_client** (*boto3.client('ssm')*) --  
+    SSM ParameterからSNS TopicのARNを取得する際に使用するクライアント。  
+    指定しなければ、```boto3.client('ssm')```が使用される。
+
+
+#### ```slack_notify(payload_json_text, **args)```
+```python
+aws_sns_to_slack.slack_notify(
+    payload_json_text,
+    incomming_webhook_url='string',
+    ssm_parameter_name='string',
+    topic_arn='string',
+    sns_client=boto3.client('sns'),
+    ssm_client=boto3.client('ssm')
+)
+```
+- Parameters
+  - **payload_json_text** (*string*) --  
+    **[REQUIRED]**  
+    Slackのincomming_webhookに渡すJSON文字列。  
+    詳しくはSlackのドキュメントを参照して欲しい。
+  - **incomming_webhook** (*string*) --  
+    Slackのincomming_webhookのURLを指定する。  
+    指定しなければ、作成時に指定したDefaultのURLを使用する。
+  - **ssm_parameter_name** (*string*) --  
+    PublishするSNS TopicのARNを格納したSSM Parameterの名前を指定する。  
+    指定しなければ、Default値```/sns-to-slack/SnsTopicArn```が指定される。
+  - **topic_arn** (*string*) --  
+    メッセージデータをPublishするSNS TopicのARN。  
+    指定しなければSSM ParameterからARNを取得する。
+  - **sns_client** (*boto3.client('sns')*) --  
+    SNS TopicにPublishする際に使用するクライアント。  
+    指定しなければ、```boto3.client('sns')```が使用される。
+  - **ssm_client** (*boto3.client('ssm')*) --  
+    SSM ParameterからSNS TopicのARNを取得する際に使用するクライアント。  
+    指定しなければ、```boto3.client('ssm')```が使用される。
