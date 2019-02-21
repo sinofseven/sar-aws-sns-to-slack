@@ -12,6 +12,6 @@ isort = "*"
 pytest = "*"
 boto3 = "*"
 awscli = "*"
+ipython = "*"
 
 [packages]
-
