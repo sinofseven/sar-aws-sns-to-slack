@@ -38,6 +38,8 @@ import aws_sns_to_slack
 - slack_notify()
 
 #### ```easy_slack_notify(message, **args)```
+渡したメッセージをSlackに投げるための簡素なメソッド。  
+メッセージの他にはusernameとchannelしか指定できない。
 
 ```python
 aws_sns_to_slack.easy_slack_notify(
@@ -77,6 +79,8 @@ aws_sns_to_slack.easy_slack_notify(
 
 
 #### ```slack_notify(payload_json_text, **args)```
+payload_json_textの内容をIncommingWebhookに投げる。
+
 ```python
 aws_sns_to_slack.slack_notify(
     payload_json_text,
