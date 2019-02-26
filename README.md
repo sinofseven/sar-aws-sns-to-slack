@@ -26,7 +26,9 @@ SNSトピックはExportValueしているので、使う際にはそちらをImp
 
 ## Lambda Layer
 
-簡単にSNSにPublishできるようにLambda Layerも作ってみました。
+簡単にSNSにPublishできるようにLambda Layerも作ってみました。  
+SNSにPublishする権限と、SSM Parameterから値を取得できる権限が必要になります。  
+(SNS TopicのARNを直接指定する場合はSSM Parameterの閲覧権限は必要ありません)
 
 ### Python
 Pythonの3.7, 3.6, 2.7に対応しています。  
