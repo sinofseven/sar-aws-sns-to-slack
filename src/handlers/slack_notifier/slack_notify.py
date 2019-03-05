@@ -44,7 +44,6 @@ class SlackNotifier(object):
         })
 
 
-
 def lambda_handler(event, context):
     try:
         os.environ['LAMBDA_REQUEST_ID'] = context.aws_request_id
