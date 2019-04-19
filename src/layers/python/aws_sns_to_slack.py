@@ -3,20 +3,42 @@ from logging import getLogger
 
 import boto3
 
-ssm = boto3.client('ssm')
-sns = boto3.client('sns')
+ssm = None
+sns = None
 logger = getLogger(__name__)
 SSM_PARAMETER_NAME = '/sns-to-slack/SnsTopicArn'
 
 
-def get_sns_topic_arn(ssm_parameter_name=SSM_PARAMETER_NAME, ssm_client=ssm):
+def get_ssm_client(ssm_client):
+    global ssm
+    if ssm_client is not None:
+        return ssm_client
+    if ssm is None:
+        ssm = boto3.client('ssm')
+    return ssm
+
+
+def get_sns_client(sns_client):
+    global sns
+    if sns_client is not None:
+        return sns_client
+    if sns is None:
+        sns = boto3.client('sns')
+    return sns
+
+
+def get_sns_topic_arn(ssm_parameter_name=SSM_PARAMETER_NAME, ssm_client=None):
+    ssm_client = get_ssm_client(ssm_client)
     logger.debug('ssm parameter name', ssm_parameter_name)
     resp = ssm_client.get_parameter(Name=ssm_parameter_name)
     return resp['Parameter']['Value']
 
 
 def slack_notify(payload_json_text, incomming_webhook_url=None, topic_arn=None,
-                 ssm_parameter_name=SSM_PARAMETER_NAME, sns_client=sns, ssm_client=ssm):
+                 ssm_parameter_name=SSM_PARAMETER_NAME, sns_client=None, ssm_client=None):
+    sns_client = get_sns_client(sns_client)
+    ssm_client = get_ssm_client(ssm_client)
+
     options = {
         'Message': payload_json_text
     }
@@ -32,7 +54,9 @@ def slack_notify(payload_json_text, incomming_webhook_url=None, topic_arn=None,
 
 
 def easy_slack_notify(message, channel=None, username=None, incomming_webhook_url=None,
-                      topic_arn=None, ssm_parameter_name=SSM_PARAMETER_NAME, sns_client=sns, ssm_client=ssm):
+                      topic_arn=None, ssm_parameter_name=SSM_PARAMETER_NAME, sns_client=None, ssm_client=None):
+    sns_client = get_sns_client(sns_client)
+    ssm_client = get_ssm_client(ssm_client)
     payload = {
         'text': message
     }
