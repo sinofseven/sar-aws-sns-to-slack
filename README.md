@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/sinofseven/sar-aws-sns-to-slack/tree/master.svg?style=svg)](https://circleci.com/gh/sinofseven/sar-aws-sns-to-slack/tree/master)
-
 # aws-sns-to-slack
 
 SNSトピックにSlackのimcomming_webhookにわたすJSONデータをPublishすると、Slackに投稿してくれるアプリケーションです。
@@ -26,7 +24,9 @@ SNSトピックはExportValueしているので、使う際にはそちらをImp
 
 ## Lambda Layer
 
-簡単にSNSにPublishできるようにLambda Layerも作ってみました。
+簡単にSNSにPublishできるようにLambda Layerも作ってみました。  
+SNSにPublishする権限と、SSM Parameterから値を取得できる権限が必要になります。  
+(SNS TopicのARNを直接指定する場合はSSM Parameterの閲覧権限は必要ありません)
 
 ### Python
 Pythonの3.7, 3.6, 2.7に対応しています。  
