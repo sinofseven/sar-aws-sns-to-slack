@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/sinofseven/sar-aws-sns-to-slack/tree/master.svg?style=svg)](https://circleci.com/gh/sinofseven/sar-aws-sns-to-slack/tree/master)
-
 # aws-sns-to-slack
 
 SNSトピックにSlackのimcomming_webhookにわたすJSONデータをPublishすると、Slackに投稿してくれるアプリケーションです。
