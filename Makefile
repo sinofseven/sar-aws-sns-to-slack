@@ -5,16 +5,24 @@ E2E_TEST_STACK:=E2ETestStackForAWSSnsToSlack
 lint:
 	pipenv run flake8 \
 		src/handlers/slack_notifier \
-		src/layers/python/ \
+		src/layers/slack_notifier/ \
 		tests/e2e/
 
 isort:
 	pipenv run isort -rc \
 		src/handlers/slack_notifier \
-		src/layers/python \
+		src/layers/slack_notifier \
 		tests/e2e/
 
 build:
+	pwd_dir=$$PWD; \
+	cd src/layers/requests; \
+	pipenv lock --requirements > requirements.txt; \
+	pip install -r requirements.txt -t python; \
+	rm requirements.txt; \
+	cd $$pwd_dir;
+
+package:
 	rm -rf .sam
 	mkdir -p .sam
 	pipenv run aws cloudformation package \
@@ -22,7 +30,7 @@ build:
 		--s3-bucket $$S3_BUCKET \
 		--output-template-file .sam/template.yml
 
-deploy: build
+deploy: package
 	pipenv run aws cloudformation deploy \
 		--template-file .sam/template.yml \
 		--stack-name $$STACK_NAME \
@@ -38,7 +46,7 @@ destroy:
 test-e2e:
 	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/test_e2e.py ;
 
-create-e2e-stack:
+create-e2e-stack: build
 	rm -rf .sam
 	mkdir -p .sam
 	pipenv run aws cloudformation package \

@@ -3,7 +3,7 @@ version: 2
 references:
   base_container: &base_container
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.6.8
   install_dependencies: &install_dependencies
     run:
       name: pipenv install
