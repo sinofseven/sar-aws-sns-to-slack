@@ -17,6 +17,14 @@ Resources:
   SlackNotifierTopic:
     Type: AWS::SNS::Topic
 
+  RequestsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: src/layers/requests
+      CompatibleRuntimes:
+        - python3.6
+      RetentionPolicy: Delete
+
   SlackNotifierFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -27,6 +35,8 @@ Resources:
       CodeUri: src/handlers/slack_notifier
       Handler: slack_notify.lambda_handler
       AutoPublishAlias: production
+      Layers:
+        - !Ref RequestsLayer
       Environment:
         Variables:
           DEFAULT_INCOMMING_WEBHOOK_URL: !Ref DefaultSlackIncommingWebhookUrl
@@ -47,7 +57,7 @@ Resources:
   SlackNotifierLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      ContentUri: src/layers
+      ContentUri: src/layers/slack_notifier
       CompatibleRuntimes:
         - python3.6
         - python3.7
