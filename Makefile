@@ -41,7 +41,7 @@ destroy:
 		--stack-name $$STACK_NAME
 
 test-e2e:
-	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/test_e2e.py ;
+	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/;
 
 create-e2e-stack:
 	rm -rf .sam

@@ -3,7 +3,7 @@ import time
 
 
 def sleep():
-    time.sleep(10)
+    time.sleep(3)
 
 
 def get_object_text(s3_client, bucket, key):
