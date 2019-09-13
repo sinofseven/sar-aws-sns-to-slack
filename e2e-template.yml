@@ -41,6 +41,7 @@ Resources:
           Properties:
             RestApiId: !Ref API
             Path: /default
+            Method: POST
 
   SpecificBackendFunction:
     Type: AWS::Serverless::Function
@@ -54,11 +55,12 @@ Resources:
           S3_BUCKET: !Ref TmpBucket
           S3_KEY: !Ref NormalKey
       Events:
-        Normal:
+        Specific:
           Type: Api
           Properties:
             RestApiId: !Ref API
             Path: /specific
+            Method: POST
 
   AWSSnsToSlack:
     Type: AWS::CloudFormation::Stack
