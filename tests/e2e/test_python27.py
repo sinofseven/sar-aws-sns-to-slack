@@ -15,7 +15,7 @@ class TestLayerPython27(object):
 
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
-        assert json.dumps(resp) == expected
+        assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
     def test_easy_slack_notify_default(
@@ -26,7 +26,7 @@ class TestLayerPython27(object):
 
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
-        assert json.dumps(resp) == expected
+        assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
     def test_easy_slack_notify_specific_url(
@@ -45,7 +45,7 @@ class TestLayerPython27(object):
 
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, specific_key)
-        assert json.dumps(resp) == expected
+        assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
     def test_easy_slack_notify_set_parameter_name(
@@ -69,7 +69,7 @@ class TestLayerPython27(object):
 
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
-        assert json.dumps(resp) == expected
+        assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
     def test_easy_slack_notify_set_topic_arn(
@@ -81,4 +81,4 @@ class TestLayerPython27(object):
 
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
-        assert json.dumps(resp) == expected
+        assert json.loads(resp) == expected

@@ -13,7 +13,7 @@ class TestDefaultUrl(object):
 
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
-        assert json.dumps(resp) == expected
+        assert json.loads(resp) == expected
 
 
 @pytest.mark.usefixtures("delete_objects")
@@ -24,4 +24,4 @@ class TestSpecificUrl(object):
 
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, specific_key)
-        assert json.dumps(resp) == expected
+        assert json.loads(resp) == expected

@@ -7,7 +7,7 @@ def sleep():
 
 
 def get_object_text(s3_client, bucket, key):
-    return s3_client.get_object(Bucket=bucket, Key=key)["Body"].read().decode()
+    return s3_client.get_object(Bucket=bucket, Key=key)["Body"].read()
 
 
 def lambda_invoke(lambda_client, function_name, event):
