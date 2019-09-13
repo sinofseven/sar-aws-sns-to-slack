@@ -22,7 +22,7 @@ Resources:
   API:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: !Ref StateName
+      StageName: !Ref StageName
 
   DefaultBackendFunction:
     Type: AWS::Serverless::Function
