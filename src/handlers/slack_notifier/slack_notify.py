@@ -1,7 +1,7 @@
 import json
 import os
 
-import requests
+import http_client as requests
 from logger import get_logger
 
 logger = get_logger(__name__)
@@ -35,11 +35,10 @@ class SlackNotifier(object):
 
     def send_slack(self):
         resp = requests.post(self.url, data=self.payload.encode('utf-8'))
-        resp.encoding = resp.apparent_encoding
         logger.info('post result', {
             'StatusCode': resp.status_code,
             'Headers': str(resp.headers),
-            'Text': resp.text
+            'Text': resp.read()
         })
 
 
