@@ -40,7 +40,7 @@ jobs:
       - checkout
       - run:
           name: ttt
-          command: circleci tests glob "tests/e2e/test_*.py" | xargs -n 1 echo
+          command: circleci tests glob "tests/e2e/test_*.py" | circleci tests split
 
 workflows:
   version: 2
