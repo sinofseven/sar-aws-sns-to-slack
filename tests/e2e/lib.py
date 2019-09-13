@@ -1,7 +1,6 @@
-import json
-import time
 import hashlib
 import json
+import time
 
 
 def sleep():
@@ -12,9 +11,12 @@ def to_hash(key):
     return hashlib.sha3_256(key.encode()).hexdigest()
 
 
+def create_key(prefix, item):
+    return f"{prefix}{to_hash(json.dumps(item))}"
+
+
 def get_object_text(s3_client, bucket, key, item):
-    fixed_key = f'{key}{}'
-    return s3_client.get_object(Bucket=bucket, Key=key)["Body"].read()
+    return s3_client.get_object(Bucket=bucket, Key=create_key(key, item))["Body"].read()
 
 
 def lambda_invoke(lambda_client, function_name, event):

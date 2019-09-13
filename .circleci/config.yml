@@ -20,6 +20,7 @@ jobs:
           command: make lint
   test-e2e:
     <<: *base_container
+    parallelism: 4
     steps:
       - checkout
       - <<: *install_dependencies
@@ -28,7 +29,7 @@ jobs:
           command: make create-e2e-stack
       - run:
           name: make test-e2e
-          command: make test-e2e
+          command: make test-e2e-for-circleci
       - run:
           name: make delete-e2e-stack
           command: make delete-e2e-stack

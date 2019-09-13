@@ -5,7 +5,6 @@ import pytest
 from .lib import get_object_text, lambda_invoke, sleep, test_data
 
 
-@pytest.mark.usefixtures("delete_objects")
 class TestLayerPython27(object):
     @pytest.mark.parametrize("expected", test_data["layer"]["slack_notify"])
     def test_slack_notify_default(
@@ -15,7 +14,7 @@ class TestLayerPython27(object):
         lambda_invoke(lambda_client, name_lambda_python27, event)
 
         sleep()
-        resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
+        resp = get_object_text(s3_client, tmp_bucket_name, normal_key, expected)
         assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
@@ -26,7 +25,7 @@ class TestLayerPython27(object):
         lambda_invoke(lambda_client, name_lambda_python27, event)
 
         sleep()
-        resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
+        resp = get_object_text(s3_client, tmp_bucket_name, normal_key, expected)
         assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
@@ -45,7 +44,7 @@ class TestLayerPython27(object):
         lambda_invoke(lambda_client, name_lambda_python27, event)
 
         sleep()
-        resp = get_object_text(s3_client, tmp_bucket_name, specific_key)
+        resp = get_object_text(s3_client, tmp_bucket_name, specific_key, expected)
         assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
@@ -69,7 +68,7 @@ class TestLayerPython27(object):
         lambda_invoke(lambda_client, name_lambda_python27, event)
 
         sleep()
-        resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
+        resp = get_object_text(s3_client, tmp_bucket_name, normal_key, expected)
         assert json.loads(resp) == expected
 
     @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
@@ -81,5 +80,5 @@ class TestLayerPython27(object):
         lambda_invoke(lambda_client, name_lambda_python27, event)
 
         sleep()
-        resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
+        resp = get_object_text(s3_client, tmp_bucket_name, normal_key, expected)
         assert json.loads(resp) == expected
