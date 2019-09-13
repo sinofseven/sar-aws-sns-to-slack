@@ -5,7 +5,7 @@ from uuid import uuid4
 
 
 def sleep():
-    time.sleep(10)
+    time.sleep(3)
 
 
 def to_hash(key):

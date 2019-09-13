@@ -94,8 +94,9 @@ def delete_objects(request, s3_resource, tmp_bucket_name):
     def delete():
         bucket = s3_resource.Bucket(tmp_bucket_name)
         objs = bucket.objects.all()
-        size = len(objs)
+        size = 0
         for obj in objs:
+            size += 1
             obj.delete()
         time.sleep(size)
 
