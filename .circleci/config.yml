@@ -54,13 +54,7 @@ workflows:
               only: master
             tags:
               only: /.*/
-      - create-e2e-resource
       - test-e2e:
-          requires:
-            - create-e2e-resource
           filters:
             tags:
               only: /.*/
-      - delete-e2e-resource:
-          requires:
-            - test-e2e
