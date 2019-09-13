@@ -1,8 +1,8 @@
 import json
 
-from .lib import sleep, get_object_text, lambda_invoke, list_expected, test_data
-
 import pytest
+
+from .lib import get_object_text, lambda_invoke, sleep, test_data
 
 
 class TestLayerPython27(object):

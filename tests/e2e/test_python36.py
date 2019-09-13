@@ -1,10 +1,8 @@
-
-
-
 import json
+
 import pytest
 
-from .lib import sleep, get_object_text, lambda_invoke, list_expected, test_data
+from .lib import get_object_text, lambda_invoke, sleep, test_data
 
 
 @pytest.mark.usefixtures("delete_objects")
@@ -85,5 +83,3 @@ class TestLayerPython36(object):
         sleep()
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key)
         assert json.dumps(resp) == expected
-
-

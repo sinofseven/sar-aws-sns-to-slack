@@ -1,7 +1,8 @@
 import json
+
 import pytest
 
-from .lib import sleep, get_object_text, lambda_invoke, list_expected, test_data
+from .lib import get_object_text, list_expected, sleep
 
 
 @pytest.mark.usefixtures("delete_objects")
