@@ -56,6 +56,7 @@ create-e2e-stack:
 		--capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
 
 delete-e2e-stack:
+	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/test_for_making_bucket_empty.py;
 	pipenv run aws cloudformation delete-stack \
 		--stack-name $(E2E_TEST_STACK)
 	pipenv run aws cloudformation wait stack-delete-complete \

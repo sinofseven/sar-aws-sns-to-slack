@@ -30,7 +30,7 @@ def s3_client():
 
 
 @pytest.fixture(scope="session")
-def s3_resouce():
+def s3_resource():
     return boto3.resource("s3")
 
 
@@ -94,7 +94,7 @@ def specific_key(stack_outputs):
 
 
 @pytest.fixture(scope="function")
-def delete_objects(s3_resouce, tmp_bucket_name):
+def delete_objects(s3_resource, tmp_bucket_name):
     yield
-    for obj in s3_resouce.Bucket(tmp_bucket_name).objects.all():
+    for obj in s3_resource.Bucket(tmp_bucket_name).objects.all():
         obj.delete()
