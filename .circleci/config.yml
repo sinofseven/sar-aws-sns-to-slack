@@ -43,6 +43,8 @@ workflows:
             tags:
               only: /.*/
       - test-e2e:
+          requires:
+            - lint
           filters:
             tags:
               only: /.*/
