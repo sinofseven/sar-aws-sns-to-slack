@@ -3,7 +3,7 @@ import os
 
 
 def handler(event, context):
-    boto3.client("boto3").put_object(
+    boto3.client("s3").put_object(
         Bucket=os.environ["S3_BUCKET"],
         Key=os.environ["S3_KEY"],
         Body=event["body"].encode(),

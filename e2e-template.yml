@@ -15,6 +15,10 @@ Parameters:
     Type: String
     Default: specific
 
+  LambdaLogGroupNamePrefix:
+    Type: String
+    Default: /aws/lambda
+
 Resources:
   TmpBucket:
     Type: AWS::S3::Bucket
@@ -28,7 +32,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/handlers/e2e_backend
-      Handler: index.handlerz
+      Handler: index.handler
       Runtime: python3.6
       Policies:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
@@ -43,6 +47,11 @@ Resources:
             RestApiId: !Ref API
             Path: /default
             Method: POST
+
+  DefaultBackendLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${DefaultBackendFunction}
 
   SpecificBackendFunction:
     Type: AWS::Serverless::Function
@@ -63,6 +72,11 @@ Resources:
             RestApiId: !Ref API
             Path: /specific
             Method: POST
+
+  SpecificBackendLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${SpecificBackendFunction}
 
   AWSSnsToSlack:
     Type: AWS::CloudFormation::Stack
@@ -105,6 +119,11 @@ Resources:
       Layers:
         - !GetAtt AWSSnsToSlack.Outputs.SlackNotifierLayerArn
 
+  TestPython36LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${TestPython36LambdaFunction}
+
   TestPython37LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -117,6 +136,11 @@ Resources:
       Layers:
         - !GetAtt AWSSnsToSlack.Outputs.SlackNotifierLayerArn
 
+  TestPython37LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${TestPython37LambdaFunction}
+
   TestPython27LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -128,6 +152,11 @@ Resources:
       Role: !GetAtt TestLambdaRole.Arn
       Layers:
         - !GetAtt AWSSnsToSlack.Outputs.SlackNotifierLayerArn
+
+  TestPython27LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${TestPython27LambdaFunction}
 
 Outputs:
   DefaultUrl:

@@ -13,6 +13,10 @@ Parameters:
     Type: String
     Default: "/sns-to-slack/SnsTopicArn"
 
+  LambdaLogGroupNamePrefix:
+    Type: String
+    Default: /aws/lambda
+
 Resources:
   SlackNotifierTopic:
     Type: AWS::SNS::Topic
@@ -35,6 +39,11 @@ Resources:
           Type: SNS
           Properties:
             Topic: !Ref SlackNotifierTopic
+
+  SlackNotifierLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${SlackNotifierFunction}
 
   SlackNotifierTopicArnParameter:
     Type: "AWS::SSM::Parameter"
