@@ -7,125 +7,58 @@ Parameters:
     Type: String
     Default: test
 
+  NormalKey:
+    Type: String
+    Default: default
+
+  SpecificKey:
+    Type: String
+    Default: specific
+
 Resources:
-  Queue:
-    Type: AWS::SQS::Queue
-    Properties:
-      ReceiveMessageWaitTimeSeconds: 20
-      VisibilityTimeout: 0
-
-  SnsTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      Subscription:
-        - Endpoint: !GetAtt Queue.Arn
-          Protocol: sqs
-
-  QueuePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      PolicyDocument: !Sub |
-        {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "*"
-              },
-              "Action": "SQS:SendMessage",
-              "Resource": "*",
-              "Condition": {
-                "ArnEquals": {
-                  "aws:SourceArn": "${SnsTopic}"
-                }
-              }
-            }
-          ]
-        }
-      Queues:
-        - !Ref Queue
-
-  APIGatewayToSNSTopicRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: apigateway.amazonaws.com
-            Action: sts:AssumeRole
-      Path: "/"
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
-        - arn:aws:iam::aws:policy/AmazonSNSFullAccess
+  TmpBucket:
+    Type: AWS::S3::Bucket
 
   API:
-    Type: AWS::ApiGateway::RestApi
+    Type: AWS::Serverless::Api
     Properties:
-      Name: TestRequestIncommingWebhookAPI
-      Body:
-        openapi: "3.0.1"
-        info:
-          title: "TestRequestIncommingWebhookAPI"
-          version: "2019-01-11T10:04:58Z"
-        paths:
-          /default:
-            post:
-              responses:
-                "200":
-                  description: "200 response"
-                  content:
-                    application/json:
-                      schema:
-                        $ref: "#/components/schemas/Empty"
-              x-amazon-apigateway-integration:
-                credentials: !Sub "${APIGatewayToSNSTopicRole.Arn}"
-                uri: "arn:aws:apigateway:ap-northeast-1:sns:action/Publish"
-                responses:
-                  default:
-                    statusCode: "200"
-                requestParameters:
-                  integration.request.querystring.TopicArn: !Sub "'${SnsTopic}'"
-                  integration.request.querystring.Subject: "'default'"
-                  integration.request.querystring.Message: "method.request.body"
-                passthroughBehavior: "when_no_match"
-                httpMethod: "POST"
-                type: "aws"
-          /specific:
-            post:
-              responses:
-                "200":
-                  description: "200 response"
-                  content:
-                    application/json:
-                      schema:
-                        $ref: "#/components/schemas/Empty"
-              x-amazon-apigateway-integration:
-                credentials: !Sub "${APIGatewayToSNSTopicRole.Arn}"
-                uri: "arn:aws:apigateway:ap-northeast-1:sns:action/Publish"
-                responses:
-                  default:
-                    statusCode: "200"
-                requestParameters:
-                  integration.request.querystring.TopicArn: !Sub "'${SnsTopic}'"
-                  integration.request.querystring.Subject: "'specific'"
-                  integration.request.querystring.Message: "method.request.body"
-                passthroughBehavior: "when_no_match"
-                httpMethod: "POST"
-                type: "aws"
-        components:
-          schemas:
-            Empty:
-              title: "Empty Schema"
-              type: "object"
+      StageName: !Ref StateName
 
-  Deployment:
-    Type: AWS::ApiGateway::Deployment
+  DefaultBackendFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      RestApiId: !Ref API
-      StageName: !Ref StageName
+      CodeUri: src/handlers/e2e_backend
+      Handler: index.handler
+      Policies:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Environment:
+        Variables:
+          S3_BUCKET: !Ref TmpBucket
+          S3_KEY: !Ref NormalKey
+      Events:
+        Normal:
+          Type: Api
+          Properties:
+            RestApiId: !Ref API
+            Path: /default
+
+  SpecificBackendFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/handlers/e2e_backend
+      Handler: index.handler
+      Policies:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Environment:
+        Variables:
+          S3_BUCKET: !Ref TmpBucket
+          S3_KEY: !Ref NormalKey
+      Events:
+        Normal:
+          Type: Api
+          Properties:
+            RestApiId: !Ref API
+            Path: /specific
 
   AWSSnsToSlack:
     Type: AWS::CloudFormation::Stack
@@ -146,6 +79,7 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonSNSFullAccess
         - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
 
@@ -198,8 +132,6 @@ Outputs:
     Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/specific
   SNSTopicArn:
     Value: !GetAtt AWSSnsToSlack.Outputs.SlackNotifierTopicArn
-  SQSUrl:
-    Value: !Ref Queue
   AnotherNameTopicArnParameterName:
     Value: !Ref AnotherNameTopicArnParameter
   TestPython36LambdaFunctionArn:
@@ -208,3 +140,9 @@ Outputs:
     Value: !GetAtt TestPython37LambdaFunction.Arn
   TestPython27LambdaFunctionArn:
     Value: !GetAtt TestPython27LambdaFunction.Arn
+  TmpBucketName:
+    Value: !Ref TmpBucket
+  NormalKey:
+    Value: !Ref NormalKey
+  SpecificKey:
+    Value: !Ref SpecificKey

@@ -14,6 +14,11 @@ isort:
 		src/layers/slack_notifier \
 		tests/e2e/
 
+black: isort
+	pipenv run black \
+		src/ \
+		tests/
+
 build:
 	pwd_dir=$$PWD; \
 	cd src/layers/requests; \

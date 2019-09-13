@@ -5,7 +5,6 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
-flake8-quotes = "*"
 flake8-print = "*"
 flake8-isort = "*"
 isort = "*"
@@ -13,5 +12,6 @@ pytest = "*"
 boto3 = "*"
 awscli = "*"
 ipython = "*"
+black = "*"
 
 [packages]
