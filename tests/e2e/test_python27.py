@@ -2,11 +2,13 @@ import json
 
 import pytest
 
-from .lib import get_object_text, lambda_invoke, sleep, test_data
+from .lib import (create_test_data_for_layer_easy,
+                  create_test_data_for_layer_normal, get_object_text,
+                  lambda_invoke, sleep)
 
 
 class TestLayerPython27(object):
-    @pytest.mark.parametrize("expected", test_data["layer"]["slack_notify"])
+    @pytest.mark.parametrize("expected", create_test_data_for_layer_normal())
     def test_slack_notify_default(
         self, expected, lambda_client, name_lambda_python27, s3_client, tmp_bucket_name, normal_key
     ):
@@ -17,7 +19,7 @@ class TestLayerPython27(object):
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key, expected)
         assert json.loads(resp) == expected
 
-    @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
+    @pytest.mark.parametrize("data, expected", create_test_data_for_layer_easy())
     def test_easy_slack_notify_default(
         self, data, expected, lambda_client, name_lambda_python27, s3_client, tmp_bucket_name, normal_key
     ):
@@ -28,7 +30,7 @@ class TestLayerPython27(object):
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key, expected)
         assert json.loads(resp) == expected
 
-    @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
+    @pytest.mark.parametrize("data, expected", create_test_data_for_layer_easy())
     def test_easy_slack_notify_specific_url(
         self,
         data,
@@ -47,7 +49,7 @@ class TestLayerPython27(object):
         resp = get_object_text(s3_client, tmp_bucket_name, specific_key, expected)
         assert json.loads(resp) == expected
 
-    @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
+    @pytest.mark.parametrize("data, expected", create_test_data_for_layer_easy())
     def test_easy_slack_notify_set_parameter_name(
         self,
         data,
@@ -71,7 +73,7 @@ class TestLayerPython27(object):
         resp = get_object_text(s3_client, tmp_bucket_name, normal_key, expected)
         assert json.loads(resp) == expected
 
-    @pytest.mark.parametrize("data, expected", test_data["layer"]["easy_slack_notify"])
+    @pytest.mark.parametrize("data, expected", create_test_data_for_layer_easy())
     def test_easy_slack_notify_set_topic_arn(
         self, data, expected, lambda_client, name_lambda_python27, sns_topic_arn, s3_client, tmp_bucket_name, normal_key
     ):
