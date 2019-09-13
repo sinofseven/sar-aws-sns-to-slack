@@ -70,11 +70,6 @@ def name_lambda_python37(stack_outputs):
 
 
 @pytest.fixture(scope="session")
-def name_lambda_python27(stack_outputs):
-    return stack_outputs["TestPython27LambdaFunctionArn"]
-
-
-@pytest.fixture(scope="session")
 def another_ssm_parameter_name(stack_outputs):
     return stack_outputs["AnotherNameTopicArnParameterName"]
 
@@ -98,7 +93,7 @@ def specific_key(stack_outputs):
 def delete_objects(request, s3_resource, tmp_bucket_name):
     def delete():
         bucket = s3_resource.Bucket(tmp_bucket_name)
-        objs = bucket.objects.all();
+        objs = bucket.objects.all()
         size = len(objs)
         for obj in objs:
             obj.delete()

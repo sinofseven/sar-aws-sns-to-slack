@@ -50,11 +50,23 @@ workflows:
     jobs:
       - lint:
           filters:
-            branches:
-              only: master
+            tags:
+              only: /.*/
+      - create-e2e-resource:
+          requires:
+            - lint
+          filters:
             tags:
               only: /.*/
       - test-e2e:
+          requires:
+            - create-e2e-resource
+          filters:
+            tags:
+              only: /.*/
+      - delete-e2e-resource:
+          requires:
+            - test-e2e
           filters:
             tags:
               only: /.*/

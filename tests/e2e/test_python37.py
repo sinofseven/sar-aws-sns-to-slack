@@ -2,9 +2,13 @@ import json
 
 import pytest
 
-from .lib import (create_test_data_for_layer_easy,
-                  create_test_data_for_layer_normal, get_object_text,
-                  lambda_invoke, sleep)
+from .lib import (
+    create_test_data_for_layer_easy,
+    create_test_data_for_layer_normal,
+    get_object_text,
+    lambda_invoke,
+    sleep,
+)
 
 
 class TestLayerPython37(object):

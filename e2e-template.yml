@@ -141,23 +141,6 @@ Resources:
     Properties:
       LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${TestPython37LambdaFunction}
 
-  TestPython27LambdaFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Runtime: python2.7
-      Timeout: 300
-      MemorySize: 256
-      CodeUri: src/handlers/e2e
-      Handler: index.lambda_handler
-      Role: !GetAtt TestLambdaRole.Arn
-      Layers:
-        - !GetAtt AWSSnsToSlack.Outputs.SlackNotifierLayerArn
-
-  TestPython27LambdaLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub ${LambdaLogGroupNamePrefix}/${TestPython27LambdaFunction}
-
 Outputs:
   DefaultUrl:
     Value: !Sub https://${API}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/default
@@ -171,8 +154,6 @@ Outputs:
     Value: !GetAtt TestPython36LambdaFunction.Arn
   TestPython37LambdaFunctionArn:
     Value: !GetAtt TestPython37LambdaFunction.Arn
-  TestPython27LambdaFunctionArn:
-    Value: !GetAtt TestPython27LambdaFunction.Arn
   TmpBucketName:
     Value: !Ref TmpBucket
   NormalKey:
