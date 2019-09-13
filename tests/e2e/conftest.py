@@ -95,6 +95,6 @@ def specific_key(stack_outputs):
 
 @pytest.fixture(scope="function")
 def delete_objects(s3_resource, tmp_bucket_name):
-    yield
+    yield 0
     for obj in s3_resource.Bucket(tmp_bucket_name).objects.all():
         obj.delete()
