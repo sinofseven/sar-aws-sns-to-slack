@@ -19,14 +19,6 @@ black: isort
 		src/ \
 		tests/
 
-build:
-	pwd_dir=$$PWD; \
-	cd src/layers/requests; \
-	pipenv lock --requirements > requirements.txt; \
-	pip install -r requirements.txt -t python; \
-	rm requirements.txt; \
-	cd $$pwd_dir;
-
 package:
 	rm -rf .sam
 	mkdir -p .sam
@@ -51,7 +43,7 @@ destroy:
 test-e2e:
 	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/test_e2e.py ;
 
-create-e2e-stack: build
+create-e2e-stack:
 	rm -rf .sam
 	mkdir -p .sam
 	pipenv run aws cloudformation package \
@@ -73,7 +65,7 @@ delete-e2e-stack:
 	lint \
 	isort \
 	deploy \
-	build \
+	black \
 	destroy \
 	test-e2e \
 	create-e2e-stack \
