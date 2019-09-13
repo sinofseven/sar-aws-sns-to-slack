@@ -1,8 +1,8 @@
 import os
+import time
 
 import boto3
 import pytest
-import time
 
 
 @pytest.fixture(scope="session")
