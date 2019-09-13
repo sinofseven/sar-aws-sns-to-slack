@@ -1,12 +1,19 @@
 import json
 import time
+import hashlib
+import json
 
 
 def sleep():
     time.sleep(10)
 
 
-def get_object_text(s3_client, bucket, key):
+def to_hash(key):
+    return hashlib.sha3_256(key.encode()).hexdigest()
+
+
+def get_object_text(s3_client, bucket, key, item):
+    fixed_key = f'{key}{}'
     return s3_client.get_object(Bucket=bucket, Key=key)["Body"].read()
 
 
