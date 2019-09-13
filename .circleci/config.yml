@@ -18,6 +18,22 @@ jobs:
       - run:
           name: make lint
           command: make lint
+  create-e2e-resource:
+    <<: *base_container
+    steps:
+      - checkout
+      - <<: *install_dependencies
+      - run:
+          name: make create-e2e-stack
+          command: make create-e2e-stack
+  delete-e2e-resource:
+    <<: *base_container
+    steps:
+      - checkout
+      - <<: *install_dependencies
+      - run:
+          name: make delete-e2e-stack
+          command: make delete-e2e-stack
   test-e2e:
     <<: *base_container
     parallelism: 4
@@ -25,15 +41,8 @@ jobs:
       - checkout
       - <<: *install_dependencies
       - run:
-          name: make create-e2e-stack
-          command: make create-e2e-stack
-      - run:
           name: make test-e2e
           command: make test-e2e-for-circleci
-      - run:
-          name: make delete-e2e-stack
-          command: make delete-e2e-stack
-          when: always
 
 workflows:
   version: 2
@@ -41,9 +50,17 @@ workflows:
     jobs:
       - lint:
           filters:
+            branches:
+              only: master
             tags:
               only: /.*/
+      - create-e2e-resource
       - test-e2e:
+          requires:
+            - create-e2e-resource
           filters:
             tags:
               only: /.*/
+      - delete-e2e-resource:
+          requires:
+            - test-e2e
