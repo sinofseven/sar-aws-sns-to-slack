@@ -44,7 +44,7 @@ test-e2e:
 	STACK_NAME=$(E2E_TEST_STACK) pipenv run pytest tests/e2e/;
 
 test-e2e-for-circleci:
-	export STACK_NAME=$(E2E_TEST_STACK);
+	export STACK_NAME=$(E2E_TEST_STACK); \
 	circleci tests glob "tests/e2e/test_[pd]*.py" | circleci tests split | xargs pipenv run pytest;
 
 create-e2e-stack:

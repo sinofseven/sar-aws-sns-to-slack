@@ -41,7 +41,7 @@ jobs:
       - checkout
       - <<: *install_dependencies
       - run:
-          name: make test-e2e
+          name: make test-e2e {{ checksum "Pipfile" }}
           command: make test-e2e-for-circleci
 
 workflows:
