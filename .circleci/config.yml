@@ -33,6 +33,14 @@ jobs:
           name: make delete-e2e-stack
           command: make delete-e2e-stack
           when: always
+  test-parallel:
+    <<: *base_container
+    parallelism: 2
+    steps:
+      - checkout
+      - run:
+          name: ttt
+          command: circleci tests glob "tests/e2e/test_files/test_*.py" | xargs -n 1 echo
 
 workflows:
   version: 2
@@ -42,9 +50,13 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - test-parallel:
+          filters:
+            tags:
+              only: /.*/
       - test-e2e:
           requires:
             - lint
           filters:
-            tags:
-              only: /.*/
+            branches:
+              only: master
