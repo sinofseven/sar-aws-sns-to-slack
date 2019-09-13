@@ -34,7 +34,7 @@ class SlackNotifier(object):
             self.url = url
 
     def send_slack(self):
-        resp = requests.post(self.url, data=self.payload.encode('utf-8'))
+        resp = requests.post(self.url, data=self.payload.encode('utf-8'), headers={'Content-Type': 'application/json'})
         logger.info('post result', {
             'StatusCode': resp.status_code,
             'Headers': str(resp.headers),
