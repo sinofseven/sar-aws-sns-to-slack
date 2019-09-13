@@ -80,6 +80,6 @@ def create_test_data_for_layer_easy():
             if k == "text":
                 expected[k] = f"{v} {id}"
             else:
-                event[k] = v
+                expected[k] = v
         data.append((event, expected))
     return data
