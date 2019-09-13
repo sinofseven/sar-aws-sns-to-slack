@@ -28,7 +28,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/handlers/e2e_backend
-      Handler: index.handler
+      Handler: index.handlerz
+      Runtime: python3.6
       Policies:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Environment:
@@ -50,6 +51,7 @@ Resources:
       Handler: index.handler
       Policies:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
+      Runtime: python3.6
       Environment:
         Variables:
           S3_BUCKET: !Ref TmpBucket
