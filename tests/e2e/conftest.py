@@ -97,8 +97,11 @@ def specific_key(stack_outputs):
 @pytest.fixture(scope="function")
 def delete_objects(request, s3_resource, tmp_bucket_name):
     def delete():
-        for obj in s3_resource.Bucket(tmp_bucket_name).objects.all():
+        bucket = s3_resource.Bucket(tmp_bucket_name)
+        objs = bucket.objects.all();
+        size = len(objs)
+        for obj in objs:
             obj.delete()
-        time.sleep(3)
+        time.sleep(size)
 
     request.addfinalizer(delete)

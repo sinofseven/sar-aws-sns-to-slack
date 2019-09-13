@@ -36,7 +36,7 @@ jobs:
           command: make delete-e2e-stack
   test-e2e:
     <<: *base_container
-    parallelism: 4
+    parallelism: 3
     steps:
       - checkout
       - <<: *install_dependencies
