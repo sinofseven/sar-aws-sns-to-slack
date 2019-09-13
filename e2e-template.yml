@@ -64,7 +64,7 @@ Resources:
       Environment:
         Variables:
           S3_BUCKET: !Ref TmpBucket
-          S3_KEY: !Ref NormalKey
+          S3_KEY: !Ref SpecificKey
       Events:
         Specific:
           Type: Api
